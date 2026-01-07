@@ -9,6 +9,8 @@ import model.ClinicianCsvLoader;
 import model.ClinicianRepository;
 import model.AppointmentCsvLoader;
 import model.AppointmentRepository;
+import model.PrescriptionCsvLoader;
+import model.PrescriptionRepository;
 import view.MainFrame;
 
 
@@ -20,6 +22,7 @@ public class AppController {
     private final PatientRepository patientRepo = new PatientRepository();
     private final ClinicianRepository clinicianRepo = new ClinicianRepository();
     private final AppointmentRepository appointmentRepo = new AppointmentRepository();
+    private final PrescriptionRepository prescriptionRepo = new PrescriptionRepository();
 
     public AppController() {
         this.mainFrame = new MainFrame(this);
@@ -29,6 +32,7 @@ public class AppController {
         loadPatients();
         loadClinicians();
         loadAppointments();
+        loadPrescriptions();
         mainFrame.setVisible(true);
     }
 
@@ -50,6 +54,12 @@ public class AppController {
         System.out.println("Appointments loaded: " + appointmentRepo.size());
     }
 
+    private void loadPrescriptions() {
+        PrescriptionCsvLoader loader = new PrescriptionCsvLoader();
+        loader.load("data/prescriptions.csv", prescriptionRepo);
+        System.out.println("Prescriptions loaded: " + prescriptionRepo.size());
+    }
+
     // Controller API for views 
     public PatientRepository getPatientRepository() {
         return patientRepo;
@@ -61,6 +71,10 @@ public class AppController {
     
     public AppointmentRepository getAppointmentRepository() {
         return appointmentRepo;
+    }
+
+    public PrescriptionRepository getPrescriptionRepository() {
+        return prescriptionRepo;
     }
 
     public Patient addPatient(String firstName,

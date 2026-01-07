@@ -1,17 +1,24 @@
 package view.panels;
 
-import javax.swing.JPanel;
-import javax.swing.JLabel;
-import java.awt.BorderLayout;
 import controller.AppController;
+import model.PrescriptionRepository;
+import view.tables.PrescriptionTableModel;
+
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import java.awt.BorderLayout;
 
 public class PrescriptionsPanel extends JPanel {
 
-    private final AppController controller;
-
     public PrescriptionsPanel(AppController controller) {
-        this.controller = controller;
+        PrescriptionRepository repo = controller.getPrescriptionRepository();
+
         setLayout(new BorderLayout());
-        add(new JLabel("Prescriptions panel (Phase D/E: create + save to file)"), BorderLayout.CENTER);
+
+        PrescriptionTableModel model = new PrescriptionTableModel(repo.getAll());
+        JTable table = new JTable(model);
+
+        add(new JScrollPane(table), BorderLayout.CENTER);
     }
 }
