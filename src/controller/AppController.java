@@ -7,6 +7,8 @@ import model.PatientCsvSaver;
 import model.PatientCsvWriter;
 import model.ClinicianCsvLoader;
 import model.ClinicianRepository;
+import model.AppointmentCsvLoader;
+import model.AppointmentRepository;
 import view.MainFrame;
 
 
@@ -17,6 +19,7 @@ public class AppController {
     // Model
     private final PatientRepository patientRepo = new PatientRepository();
     private final ClinicianRepository clinicianRepo = new ClinicianRepository();
+    private final AppointmentRepository appointmentRepo = new AppointmentRepository();
 
     public AppController() {
         this.mainFrame = new MainFrame(this);
@@ -25,6 +28,7 @@ public class AppController {
     public void start() {
         loadPatients();
         loadClinicians();
+        loadAppointments();
         mainFrame.setVisible(true);
     }
 
@@ -40,8 +44,13 @@ public class AppController {
         System.out.println("Clinicians loaded: " + clinicianRepo.size());
     }
 
+    private void loadAppointments() {
+        AppointmentCsvLoader loader = new AppointmentCsvLoader();
+        loader.load("data/appointments.csv", appointmentRepo);
+        System.out.println("Appointments loaded: " + appointmentRepo.size());
+    }
 
-    // Controller API for views (Phase later: tables)
+    // Controller API for views 
     public PatientRepository getPatientRepository() {
         return patientRepo;
     }
@@ -49,6 +58,11 @@ public class AppController {
     public ClinicianRepository getClinicianRepository() {
         return clinicianRepo;
     }
+    
+    public AppointmentRepository getAppointmentRepository() {
+        return appointmentRepo;
+    }
+
     public Patient addPatient(String firstName,
                           String lastName,
                           String dateOfBirth,
@@ -91,30 +105,32 @@ public class AppController {
     }
 
     private String generateNextPatientId() {
+        String prefix = "P";
+        int width = 3; // because P001
+
         int max = 0;
         for (var p : patientRepo.getAll()) {
             String id = p.getPatientId();
             if (id == null) continue;
 
-            // If IDs are numeric like "12"
-            try {
-                int v = Integer.parseInt(id.trim());
-                if (v > max) max = v;
-                continue;
-            } catch (Exception ignored) { }
+            // Match like P001, P010, P123
+            var m = java.util.regex.Pattern
+                    .compile("^" + java.util.regex.Pattern.quote(prefix) + "(\\d+)$")
+                    .matcher(id.trim());
 
-            // If IDs have digits like "P012"
-            String digits = id.replaceAll("\\D+", "");
-            if (!digits.isEmpty()) {
+            if (m.matches()) {
                 try {
-                    int v = Integer.parseInt(digits);
+                    int v = Integer.parseInt(m.group(1));
                     if (v > max) max = v;
-                } catch (Exception ignored) { }
+                } catch (Exception ignored) {}
             }
         }
-        return String.valueOf(max + 1);
+
+        int next = max + 1;
+        return prefix + String.format("%0" + width + "d", next);  // e.g. P011
     }
-        public boolean deletePatientById(String patientId) {
+
+    public boolean deletePatientById(String patientId) {
         boolean removed = patientRepo.removeById(patientId);
         if (!removed) return false;
 
@@ -123,7 +139,7 @@ public class AppController {
         return true;
     }
 
-        public boolean updatePatient(Patient updated) {
+    public boolean updatePatient(Patient updated) {
         Patient existing = patientRepo.findById(updated.getPatientId());
         if (existing == null) return false;
 

@@ -1,17 +1,24 @@
 package view.panels;
 
-import javax.swing.JPanel;
-import javax.swing.JLabel;
-import java.awt.BorderLayout;
 import controller.AppController;
+import model.AppointmentRepository;
+import view.tables.AppointmentTableModel;
+
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import java.awt.BorderLayout;
 
 public class AppointmentsPanel extends JPanel {
 
-    private final AppController controller;
-
     public AppointmentsPanel(AppController controller) {
-        this.controller = controller;
+        AppointmentRepository repo = controller.getAppointmentRepository();
+
         setLayout(new BorderLayout());
-        add(new JLabel("Appointments panel (Phase D/E: CRUD)"), BorderLayout.CENTER);
+
+        AppointmentTableModel model = new AppointmentTableModel(repo.getAll());
+        JTable table = new JTable(model);
+
+        add(new JScrollPane(table), BorderLayout.CENTER);
     }
 }
