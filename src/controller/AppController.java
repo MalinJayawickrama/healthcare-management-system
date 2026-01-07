@@ -23,8 +23,11 @@ public class AppController {
     private void loadPatients() {
         PatientCsvLoader loader = new PatientCsvLoader();
         loader.load("data/patients.csv", patientRepo);
+
         System.out.println("Patients loaded: " + patientRepo.size());
+
     }
+
 
     // Controller API for views (Phase later: tables)
     public PatientRepository getPatientRepository() {
