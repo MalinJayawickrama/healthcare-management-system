@@ -13,6 +13,10 @@ import model.PrescriptionCsvLoader;
 import model.PrescriptionRepository;
 import model.Prescription;
 import model.PrescriptionCsvSaver;
+import model.ReferralCsvLoader;
+import model.ReferralManager;
+import model.ReferralRepository;
+import model.Referral;
 import view.MainFrame;
 
 
@@ -25,6 +29,7 @@ public class AppController {
     private final ClinicianRepository clinicianRepo = new ClinicianRepository();
     private final AppointmentRepository appointmentRepo = new AppointmentRepository();
     private final PrescriptionRepository prescriptionRepo = new PrescriptionRepository();
+    private final ReferralRepository referralRepo = new ReferralRepository();
 
     public AppController() {
         this.mainFrame = new MainFrame(this);
@@ -35,6 +40,7 @@ public class AppController {
         loadClinicians();
         loadAppointments();
         loadPrescriptions();
+        loadReferrals();
         mainFrame.setVisible(true);
     }
 
@@ -62,6 +68,12 @@ public class AppController {
         System.out.println("Prescriptions loaded: " + prescriptionRepo.size());
     }
 
+    private void loadReferrals() {
+        ReferralCsvLoader loader = new ReferralCsvLoader();
+        loader.load("data/referrals.csv", referralRepo);
+        System.out.println("Referrals loaded: " + referralRepo.size());
+    }
+
     // Controller API for views 
     public PatientRepository getPatientRepository() {
         return patientRepo;
@@ -77,6 +89,10 @@ public class AppController {
 
     public PrescriptionRepository getPrescriptionRepository() {
         return prescriptionRepo;
+    }
+
+    public ReferralRepository getReferralRepository() {
+        return referralRepo;
     }
 
     public Patient addPatient(String firstName,
@@ -227,5 +243,34 @@ public class AppController {
 
         int next = max + 1;
         return prefix + String.format("%0" + width + "d", next);
+    }
+    public Referral addReferral(String patientId,
+                                String referringClinicianId,
+                                String referredToClinicianId,
+                                String referringFacilityId,
+                                String referredToFacilityId,
+                                String urgencyLevel,
+                                String referralReason,
+                                String clinicalSummary,
+                                String requestedInvestigations,
+                                String status,
+                                String appointmentId,
+                                String notes) {
+
+        ReferralManager manager = ReferralManager.getInstance(referralRepo, "data/referrals.csv", "out");
+        return manager.createReferral(
+                patientId,
+                referringClinicianId,
+                referredToClinicianId,
+                referringFacilityId,
+                referredToFacilityId,
+                urgencyLevel,
+                referralReason,
+                clinicalSummary,
+                requestedInvestigations,
+                status,
+                appointmentId,
+                notes
+        );
     }
 }
