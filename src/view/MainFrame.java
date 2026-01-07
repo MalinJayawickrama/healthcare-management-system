@@ -1,23 +1,39 @@
 package view;
 
 import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.SwingConstants;
-import java.awt.BorderLayout;
+import javax.swing.JTabbedPane;
+
+import controller.AppController;
+import view.panels.AppointmentsPanel;
+import view.panels.CliniciansPanel;
+import view.panels.PatientsPanel;
+import view.panels.PrescriptionsPanel;
+import view.panels.ReferralsPanel;
 
 public class MainFrame extends JFrame {
 
-    public MainFrame() {
+    private final AppController controller;
+
+    public MainFrame(AppController controller) {
+        this.controller = controller;
+
         setTitle("Healthcare Management System");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(1000, 650);
+        setSize(1100, 700);
         setLocationRelativeTo(null);
 
-        JPanel root = new JPanel(new BorderLayout());
-        root.add(new JLabel("GUI Shell Running (MVC skeleton ready)", SwingConstants.CENTER),
-                 BorderLayout.CENTER);
+        setContentPane(buildTabs());
+    }
 
-        setContentPane(root);
+    private JTabbedPane buildTabs() {
+        JTabbedPane tabs = new JTabbedPane();
+
+        tabs.addTab("Patients", new PatientsPanel(controller));
+        tabs.addTab("Clinicians", new CliniciansPanel(controller));
+        tabs.addTab("Appointments", new AppointmentsPanel(controller));
+        tabs.addTab("Prescriptions", new PrescriptionsPanel(controller));
+        tabs.addTab("Referrals", new ReferralsPanel(controller));
+
+        return tabs;
     }
 }

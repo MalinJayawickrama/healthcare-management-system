@@ -1,13 +1,13 @@
 package app;
 
 import javax.swing.SwingUtilities;
-import view.MainFrame;
+import controller.AppController;
 
 public class Main {
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
-            MainFrame frame = new MainFrame();
-            frame.setVisible(true);
+            AppController controller = new AppController();
+            controller.start();
         });
     }
 }
