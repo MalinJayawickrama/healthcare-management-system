@@ -4,6 +4,7 @@ import model.PatientCsvLoader;
 import model.PatientRepository;
 import model.Patient;
 import model.PatientCsvSaver;
+import model.PatientCsvWriter;
 import view.MainFrame;
 
 
@@ -101,5 +102,12 @@ public class AppController {
         }
         return String.valueOf(max + 1);
     }
+        public boolean deletePatientById(String patientId) {
+        boolean removed = patientRepo.removeById(patientId);
+        if (!removed) return false;
 
+        PatientCsvWriter writer = new PatientCsvWriter();
+        writer.writeAll("data/patients.csv", patientRepo.getAll());
+        return true;
+    }
 }

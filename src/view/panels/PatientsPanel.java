@@ -10,6 +10,7 @@ import java.awt.FlowLayout;
 
 public class PatientsPanel extends JPanel {
 
+    private JTable table;
     private final AppController controller;
     private final PatientRepository repo;
     private final PatientTableModel tableModel;
@@ -21,7 +22,7 @@ public class PatientsPanel extends JPanel {
         setLayout(new BorderLayout());
 
         tableModel = new PatientTableModel(repo.getAll());
-        JTable table = new JTable(tableModel);
+        table = new JTable(tableModel);
 
         add(new JScrollPane(table), BorderLayout.CENTER);
         add(buildTopBar(), BorderLayout.NORTH);
@@ -33,7 +34,11 @@ public class PatientsPanel extends JPanel {
         JButton addBtn = new JButton("Add Patient");
         addBtn.addActionListener(e -> showAddPatientDialog());
 
+        JButton delBtn = new JButton("Delete Selected");
+        delBtn.addActionListener(e -> deleteSelectedPatient());
+
         bar.add(addBtn);
+        bar.add(delBtn);
         return bar;
     }
 
@@ -93,5 +98,32 @@ public class PatientsPanel extends JPanel {
         r.add(new JLabel(label));
         r.add(field);
         return r;
+    }
+
+        private void deleteSelectedPatient() {
+        int row = table.getSelectedRow();
+        if (row < 0) {
+            JOptionPane.showMessageDialog(this, "Select a patient first.");
+            return;
+        }
+
+        String patientId = String.valueOf(tableModel.getValueAt(row, 0));
+
+        int confirm = JOptionPane.showConfirmDialog(
+                this,
+                "Delete patient ID " + patientId + "?",
+                "Confirm delete",
+                JOptionPane.YES_NO_OPTION
+        );
+
+        if (confirm != JOptionPane.YES_OPTION) return;
+
+        boolean ok = controller.deletePatientById(patientId);
+        if (!ok) {
+            JOptionPane.showMessageDialog(this, "Delete failed (patient not found).");
+            return;
+        }
+
+        tableModel.refresh();
     }
 }
