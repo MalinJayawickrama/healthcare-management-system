@@ -6,40 +6,27 @@ import util.CsvReader;
 
 public class PatientCsvLoader {
 
-    // Reads patients.csv and fills the repository
     public void load(String filename, PatientRepository repo) {
-        var rows = util.CsvReader.readAsMaps(filename);
+        List<Map<String, String>> rows = CsvReader.readAsMaps(filename);
 
-        for (var r : rows) {
-            String id = r.get("patient_id");
-            String first = r.get("first_name");
-            String last = r.get("last_name");
-            String dob = r.get("date_of_birth");
-            String phone = r.get("phone_number");
-            String email = r.get("email");
-            String address = r.get("address");
-            String gp = r.get("gp_surgery_id");
-
+        for (Map<String, String> r : rows) {
             Patient p = new Patient(
-                    id,
-                    first,
-                    last,
-                    dob,
-                    phone,
-                    email,
-                    address,
-                    gp
+                    r.get("patient_id"),
+                    r.get("first_name"),
+                    r.get("last_name"),
+                    r.get("date_of_birth"),
+                    r.get("nhs_number"),
+                    r.get("gender"),
+                    r.get("phone_number"),
+                    r.get("email"),
+                    r.get("address"),
+                    r.get("postcode"),
+                    r.get("emergency_contact_name"),
+                    r.get("emergency_contact_phone"),
+                    r.get("registration_date"),
+                    r.get("gp_surgery_id")
             );
-
             repo.add(p);
         }
-    }
-
-
-    private String pick(Map<String, String> row, String... keys) {
-        for (String k : keys) {
-            if (row.containsKey(k)) return row.get(k);
-        }
-        return "";
     }
 }

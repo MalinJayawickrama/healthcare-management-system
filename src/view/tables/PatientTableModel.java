@@ -39,7 +39,7 @@ public class PatientTableModel extends AbstractTableModel {
             case 1 -> p.getFirstName();
             case 2 -> p.getLastName();
             case 3 -> p.getDateOfBirth();
-            case 4 -> p.getPhone();
+            case 4 -> p.getPhoneNumber();
             case 5 -> p.getEmail();
             default -> "";
         };
