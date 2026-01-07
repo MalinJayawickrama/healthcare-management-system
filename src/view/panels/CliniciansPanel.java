@@ -1,17 +1,24 @@
 package view.panels;
 
-import javax.swing.JPanel;
-import javax.swing.JLabel;
-import java.awt.BorderLayout;
 import controller.AppController;
+import model.ClinicianRepository;
+import view.tables.ClinicianTableModel;
+
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import java.awt.BorderLayout;
 
 public class CliniciansPanel extends JPanel {
 
-    private final AppController controller;
-
     public CliniciansPanel(AppController controller) {
-        this.controller = controller;
+        ClinicianRepository repo = controller.getClinicianRepository();
+
         setLayout(new BorderLayout());
-        add(new JLabel("Clinicians panel (Phase C: table display)"), BorderLayout.CENTER);
+
+        ClinicianTableModel model = new ClinicianTableModel(repo.getAll());
+        JTable table = new JTable(model);
+
+        add(new JScrollPane(table), BorderLayout.CENTER);
     }
 }

@@ -5,6 +5,8 @@ import model.PatientRepository;
 import model.Patient;
 import model.PatientCsvSaver;
 import model.PatientCsvWriter;
+import model.ClinicianCsvLoader;
+import model.ClinicianRepository;
 import view.MainFrame;
 
 
@@ -14,6 +16,7 @@ public class AppController {
 
     // Model
     private final PatientRepository patientRepo = new PatientRepository();
+    private final ClinicianRepository clinicianRepo = new ClinicianRepository();
 
     public AppController() {
         this.mainFrame = new MainFrame(this);
@@ -21,21 +24,30 @@ public class AppController {
 
     public void start() {
         loadPatients();
+        loadClinicians();
         mainFrame.setVisible(true);
     }
 
     private void loadPatients() {
         PatientCsvLoader loader = new PatientCsvLoader();
         loader.load("data/patients.csv", patientRepo);
-
         System.out.println("Patients loaded: " + patientRepo.size());
 
+    }
+    private void loadClinicians() {
+        ClinicianCsvLoader loader = new ClinicianCsvLoader();
+        loader.load("data/clinicians.csv", clinicianRepo);
+        System.out.println("Clinicians loaded: " + clinicianRepo.size());
     }
 
 
     // Controller API for views (Phase later: tables)
     public PatientRepository getPatientRepository() {
         return patientRepo;
+    }
+
+    public ClinicianRepository getClinicianRepository() {
+        return clinicianRepo;
     }
     public Patient addPatient(String firstName,
                           String lastName,
