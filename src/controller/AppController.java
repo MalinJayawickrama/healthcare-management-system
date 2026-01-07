@@ -11,6 +11,8 @@ import model.AppointmentCsvLoader;
 import model.AppointmentRepository;
 import model.PrescriptionCsvLoader;
 import model.PrescriptionRepository;
+import model.Prescription;
+import model.PrescriptionCsvSaver;
 import view.MainFrame;
 
 
@@ -175,5 +177,55 @@ public class AppController {
         PatientCsvWriter writer = new PatientCsvWriter();
         writer.writeAll("data/patients.csv", patientRepo.getAll());
         return true;
+    }
+    public Prescription addPrescription(String patientId,
+                                        String clinicianId,
+                                        String medicationName,
+                                        String dosage,
+                                        String frequency,
+                                        String instructions) {
+
+        String newId = generateNextPrescriptionId();
+
+        Prescription p = new Prescription(
+                newId,
+                patientId.trim(),
+                clinicianId.trim(),
+                medicationName.trim(),
+                dosage.trim(),
+                frequency.trim(),
+                instructions.trim()
+        );
+
+        prescriptionRepo.add(p);
+
+        PrescriptionCsvSaver saver = new PrescriptionCsvSaver();
+        saver.append("data/prescriptions.csv", p);
+
+        return p;
+    }
+    private String generateNextPrescriptionId() {
+        String prefix = "RX";
+        int width = 3; // RX001
+
+        int max = 0;
+        for (var p : prescriptionRepo.getAll()) {
+            String id = p.getPrescriptionId();
+            if (id == null) continue;
+
+            var m = java.util.regex.Pattern
+                    .compile("^" + prefix + "(\\d+)$")
+                    .matcher(id.trim());
+
+            if (m.matches()) {
+                try {
+                    int v = Integer.parseInt(m.group(1));
+                    if (v > max) max = v;
+                } catch (Exception ignored) {}
+            }
+        }
+
+        int next = max + 1;
+        return prefix + String.format("%0" + width + "d", next);
     }
 }
