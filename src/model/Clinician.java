@@ -2,50 +2,73 @@ package model;
 
 public class Clinician {
     private final String clinicianId;
+
     private String firstName;
     private String lastName;
-    private String role;
+    private String title;
+    private String speciality;
+    private String gmcNumber;
     private String phoneNumber;
     private String email;
-    private String facilityId;
+
+    private String workplaceId;
+    private String workplaceType;
+    private String employmentStatus;
+    private String startDate;
 
     public Clinician(String clinicianId,
                      String firstName,
                      String lastName,
-                     String role,
+                     String title,
+                     String speciality,
+                     String gmcNumber,
                      String phoneNumber,
                      String email,
-                     String facilityId) {
+                     String workplaceId,
+                     String workplaceType,
+                     String employmentStatus,
+                     String startDate) {
         this.clinicianId = clinicianId;
         this.firstName = firstName;
         this.lastName = lastName;
-        this.role = role;
+        this.title = title;
+        this.speciality = speciality;
+        this.gmcNumber = gmcNumber;
         this.phoneNumber = phoneNumber;
         this.email = email;
-        this.facilityId = facilityId;
+        this.workplaceId = workplaceId;
+        this.workplaceType = workplaceType;
+        this.employmentStatus = employmentStatus;
+        this.startDate = startDate;
     }
 
     public String getClinicianId() { return clinicianId; }
     public String getFirstName() { return firstName; }
     public String getLastName() { return lastName; }
-    public String getRole() { return role; }
+    public String getTitle() { return title; }
+    public String getSpeciality() { return speciality; }
+    public String getGmcNumber() { return gmcNumber; }
     public String getPhoneNumber() { return phoneNumber; }
     public String getEmail() { return email; }
-    public String getFacilityId() { return facilityId; }
+    public String getWorkplaceId() { return workplaceId; }
+    public String getWorkplaceType() { return workplaceType; }
+    public String getEmploymentStatus() { return employmentStatus; }
+    public String getStartDate() { return startDate; }
 
     public void setFirstName(String firstName) { this.firstName = firstName; }
     public void setLastName(String lastName) { this.lastName = lastName; }
-    public void setRole(String role) { this.role = role; }
+    public void setTitle(String title) { this.title = title; }
+    public void setSpeciality(String speciality) { this.speciality = speciality; }
+    public void setGmcNumber(String gmcNumber) { this.gmcNumber = gmcNumber; }
     public void setPhoneNumber(String phoneNumber) { this.phoneNumber = phoneNumber; }
     public void setEmail(String email) { this.email = email; }
-    public void setFacilityId(String facilityId) { this.facilityId = facilityId; }
+    public void setWorkplaceId(String workplaceId) { this.workplaceId = workplaceId; }
+    public void setWorkplaceType(String workplaceType) { this.workplaceType = workplaceType; }
+    public void setEmploymentStatus(String employmentStatus) { this.employmentStatus = employmentStatus; }
+    public void setStartDate(String startDate) { this.startDate = startDate; }
 
-    public String getFullName() {
-        return firstName + " " + lastName;
-    }
+    public String getFullName() { return firstName + " " + lastName; }
 
     @Override
-    public String toString() {
-        return clinicianId + " - " + getFullName();
-    }
+    public String toString() { return clinicianId + " - " + getFullName(); }
 }

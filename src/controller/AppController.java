@@ -17,6 +17,9 @@ import model.ReferralCsvLoader;
 import model.ReferralManager;
 import model.ReferralRepository;
 import model.Referral;
+import model.Clinician;
+import model.ClinicianCsvSaver;
+import model.ClinicianCsvWriter;
 import view.MainFrame;
 
 
@@ -272,5 +275,76 @@ public class AppController {
                 appointmentId,
                 notes
         );
+    }
+    public Clinician addClinician(String firstName, String lastName, String title, String speciality,
+                                String gmcNumber, String phone, String email,
+                                String workplaceId, String workplaceType,
+                                String employmentStatus, String startDate) {
+
+        String newId = generateNextClinicianId();
+
+        Clinician c = new Clinician(
+                newId,
+                safe(firstName), safe(lastName),
+                safe(title), safe(speciality),
+                safe(gmcNumber),
+                safe(phone), safe(email),
+                safe(workplaceId), safe(workplaceType),
+                safe(employmentStatus), safe(startDate)
+        );
+
+        clinicianRepo.add(c);
+        new ClinicianCsvSaver().append("data/clinicians.csv", c);
+        return c;
+    }
+
+    public boolean updateClinician(Clinician updated) {
+        Clinician existing = clinicianRepo.findById(updated.getClinicianId());
+        if (existing == null) return false;
+
+        existing.setFirstName(updated.getFirstName());
+        existing.setLastName(updated.getLastName());
+        existing.setTitle(updated.getTitle());
+        existing.setSpeciality(updated.getSpeciality());
+        existing.setGmcNumber(updated.getGmcNumber());
+        existing.setPhoneNumber(updated.getPhoneNumber());
+        existing.setEmail(updated.getEmail());
+        existing.setWorkplaceId(updated.getWorkplaceId());
+        existing.setWorkplaceType(updated.getWorkplaceType());
+        existing.setEmploymentStatus(updated.getEmploymentStatus());
+        existing.setStartDate(updated.getStartDate());
+
+        new ClinicianCsvWriter().writeAll("data/clinicians.csv", clinicianRepo.getAll());
+        return true;
+    }
+
+    public boolean deleteClinicianById(String clinicianId) {
+        Clinician c = clinicianRepo.findById(clinicianId);
+        if (c == null) return false;
+
+        clinicianRepo.getAll().remove(c);
+        new ClinicianCsvWriter().writeAll("data/clinicians.csv", clinicianRepo.getAll());
+        return true;
+    }
+
+    private String generateNextClinicianId() {
+        String prefix = "C";
+        int width = 3;
+
+        int max = 0;
+        for (var c : clinicianRepo.getAll()) {
+            String id = c.getClinicianId();
+            if (id == null) continue;
+
+            var m = java.util.regex.Pattern.compile("^" + prefix + "(\\d+)$").matcher(id.trim());
+            if (m.matches()) {
+                try {
+                    int v = Integer.parseInt(m.group(1));
+                    if (v > max) max = v;
+                } catch (Exception ignored) {}
+            }
+        }
+
+        return prefix + String.format("%0" + width + "d", max + 1);
     }
 }

@@ -6,7 +6,7 @@ import model.Clinician;
 
 public class ClinicianTableModel extends AbstractTableModel {
 
-    private final String[] columns = {"Clinician ID", "First Name", "Last Name", "Role", "Phone", "Email", "Facility"};
+    private final String[] columns = {"Clinician ID", "First Name", "Last Name", "Title", "Speciality", "Phone", "Email", "Workplace"};
     private final List<Clinician> clinicians;
 
     public ClinicianTableModel(List<Clinician> clinicians) {
@@ -29,10 +29,11 @@ public class ClinicianTableModel extends AbstractTableModel {
             case 0 -> c.getClinicianId();
             case 1 -> c.getFirstName();
             case 2 -> c.getLastName();
-            case 3 -> c.getRole();
-            case 4 -> c.getPhoneNumber();
-            case 5 -> c.getEmail();
-            case 6 -> c.getFacilityId();
+            case 3 -> c.getTitle();
+            case 4 -> c.getSpeciality();
+            case 5 -> c.getPhoneNumber();
+            case 6 -> c.getEmail();
+            case 7 -> c.getEmploymentStatus();
             default -> "";
         };
     }
