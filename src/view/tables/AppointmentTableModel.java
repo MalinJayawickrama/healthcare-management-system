@@ -7,9 +7,15 @@ import model.Appointment;
 public class AppointmentTableModel extends AbstractTableModel {
 
     private final String[] columns = {
-            "Appointment ID", "Patient ID", "Clinician ID", "Facility ID",
-            "Date", "Time", "Status"
+            "Appointment ID",
+            "Patient ID",
+            "Clinician ID",
+            "Facility ID",
+            "Date",
+            "Time",
+            "Status"
     };
+
 
     private final List<Appointment> appointments;
 

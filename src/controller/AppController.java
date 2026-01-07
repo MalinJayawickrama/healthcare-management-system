@@ -20,6 +20,9 @@ import model.Referral;
 import model.Clinician;
 import model.ClinicianCsvSaver;
 import model.ClinicianCsvWriter;
+import model.Appointment;
+import model.AppointmentCsvSaver;
+import model.AppointmentCsvWriter;
 import view.MainFrame;
 
 
@@ -342,6 +345,78 @@ public class AppController {
                     int v = Integer.parseInt(m.group(1));
                     if (v > max) max = v;
                 } catch (Exception ignored) {}
+            }
+        }
+
+        return prefix + String.format("%0" + width + "d", max + 1);
+    }
+public Appointment addAppointment(String patientId,
+                                  String clinicianId,
+                                  String facilityId,
+                                  String date,
+                                  String time,
+                                  String status,
+                                  String notes) {
+
+    String newId = generateNextAppointmentId();
+
+    Appointment a = new Appointment(
+            newId,
+            safe(patientId),
+            safe(clinicianId),
+            safe(facilityId),
+            safe(date),
+            safe(time),
+            safe(status),
+            safe(notes)
+    );
+
+    appointmentRepo.add(a);
+    new AppointmentCsvSaver().append("data/appointments.csv", a);
+    return a;
+}
+
+public boolean updateAppointment(Appointment updated) {
+    Appointment existing = appointmentRepo.findById(updated.getAppointmentId());
+    if (existing == null) return false;
+
+    existing.setPatientId(updated.getPatientId());
+    existing.setClinicianId(updated.getClinicianId());
+    existing.setFacilityId(updated.getFacilityId());
+    existing.setAppointmentDate(updated.getAppointmentDate());
+    existing.setAppointmentTime(updated.getAppointmentTime());
+    existing.setStatus(updated.getStatus());
+    existing.setNotes(updated.getNotes());
+
+    new AppointmentCsvWriter().writeAll("data/appointments.csv", appointmentRepo.getAll());
+    return true;
+}
+
+public boolean deleteAppointmentById(String appointmentId) {
+    boolean removed = appointmentRepo.removeById(appointmentId);
+    if (!removed) return false;
+
+    new AppointmentCsvWriter().writeAll("data/appointments.csv", appointmentRepo.getAll());
+    return true;
+}
+
+    private String generateNextAppointmentId() {
+        String prefix = "A";
+        int width = 3;
+
+        int max = 0;
+        for (var a : appointmentRepo.getAll()) {
+            String id = a.getAppointmentId();
+            if (id == null) continue;
+
+            if (id.startsWith(prefix)) {
+                String digits = id.substring(prefix.length()).replaceAll("\\D+", "");
+                if (!digits.isEmpty()) {
+                    try {
+                        int v = Integer.parseInt(digits);
+                        if (v > max) max = v;
+                    } catch (Exception ignored) {}
+                }
             }
         }
 
