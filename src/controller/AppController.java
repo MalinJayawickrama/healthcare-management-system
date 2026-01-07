@@ -23,6 +23,7 @@ import model.ClinicianCsvWriter;
 import model.Appointment;
 import model.AppointmentCsvSaver;
 import model.AppointmentCsvWriter;
+import model.PrescriptionCsvWriter;
 import view.MainFrame;
 
 
@@ -421,5 +422,24 @@ public boolean deleteAppointmentById(String appointmentId) {
         }
 
         return prefix + String.format("%0" + width + "d", max + 1);
+    }
+    public boolean updatePrescription(Prescription updated) {
+        Prescription existing = prescriptionRepo.findById(updated.getPrescriptionId());
+        if (existing == null) return false;
+
+        // update fields (Prescription has no setters, so simplest is: remove + add)
+        prescriptionRepo.removeById(existing.getPrescriptionId());
+        prescriptionRepo.add(updated);
+
+        new PrescriptionCsvWriter().writeAll("data/prescriptions.csv", prescriptionRepo.getAll());
+        return true;
+    }
+
+    public boolean deletePrescriptionById(String prescriptionId) {
+        boolean removed = prescriptionRepo.removeById(prescriptionId);
+        if (!removed) return false;
+
+        new PrescriptionCsvWriter().writeAll("data/prescriptions.csv", prescriptionRepo.getAll());
+        return true;
     }
 }

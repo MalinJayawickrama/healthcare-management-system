@@ -16,6 +16,10 @@ public class PrescriptionTableModel extends AbstractTableModel {
     public PrescriptionTableModel(List<Prescription> prescriptions) {
         this.prescriptions = prescriptions;
     }
+    
+    public void refresh() {
+        fireTableDataChanged();
+    }
 
     @Override
     public int getRowCount() { return prescriptions.size(); }
