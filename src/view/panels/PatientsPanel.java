@@ -34,11 +34,16 @@ public class PatientsPanel extends JPanel {
         JButton addBtn = new JButton("Add Patient");
         addBtn.addActionListener(e -> showAddPatientDialog());
 
+        JButton editBtn = new JButton("Edit Selected");
+        editBtn.addActionListener(e -> showEditPatientDialog());
+
         JButton delBtn = new JButton("Delete Selected");
         delBtn.addActionListener(e -> deleteSelectedPatient());
 
         bar.add(addBtn);
+        bar.add(editBtn);
         bar.add(delBtn);
+
         return bar;
     }
 
@@ -121,6 +126,83 @@ public class PatientsPanel extends JPanel {
         boolean ok = controller.deletePatientById(patientId);
         if (!ok) {
             JOptionPane.showMessageDialog(this, "Delete failed (patient not found).");
+            return;
+        }
+
+        tableModel.refresh();
+    }
+    private void showEditPatientDialog() {
+        int row = table.getSelectedRow();
+        if (row < 0) {
+            JOptionPane.showMessageDialog(this, "Select a patient first.");
+            return;
+        }
+
+        String patientId = String.valueOf(tableModel.getValueAt(row, 0));
+        var existing = repo.findById(patientId);
+        if (existing == null) {
+            JOptionPane.showMessageDialog(this, "Patient not found in repository.");
+            return;
+        }
+
+        JTextField firstName = new JTextField(existing.getFirstName(), 15);
+        JTextField lastName = new JTextField(existing.getLastName(), 15);
+        JTextField dob = new JTextField(existing.getDateOfBirth(), 10);
+        JTextField phone = new JTextField(existing.getPhoneNumber(), 12);
+        JTextField email = new JTextField(existing.getEmail(), 18);
+        JTextField address = new JTextField(existing.getAddress(), 20);
+        JTextField postcode = new JTextField(existing.getPostcode(), 10);
+        JTextField gpSurgeryId = new JTextField(existing.getGpSurgeryId(), 10);
+
+        JPanel form = new JPanel();
+        form.setLayout(new BoxLayout(form, BoxLayout.Y_AXIS));
+
+        form.add(row("Patient ID (read-only):", new JLabel(existing.getPatientId())));
+        form.add(row("First name:", firstName));
+        form.add(row("Last name:", lastName));
+        form.add(row("Date of birth:", dob));
+        form.add(row("Phone:", phone));
+        form.add(row("Email:", email));
+        form.add(row("Address:", address));
+        form.add(row("Postcode:", postcode));
+        form.add(row("GP surgery ID:", gpSurgeryId));
+
+        int result = JOptionPane.showConfirmDialog(
+                this,
+                form,
+                "Edit Patient",
+                JOptionPane.OK_CANCEL_OPTION,
+                JOptionPane.PLAIN_MESSAGE
+        );
+
+        if (result != JOptionPane.OK_OPTION) return;
+
+        if (firstName.getText().trim().isEmpty() || lastName.getText().trim().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "First name and last name are required.");
+            return;
+        }
+
+        // Create updated patient object (other fields blank for now)
+        var updated = new model.Patient(
+                existing.getPatientId(),
+                firstName.getText().trim(),
+                lastName.getText().trim(),
+                dob.getText().trim(),
+                existing.getNhsNumber(),
+                existing.getGender(),
+                phone.getText().trim(),
+                email.getText().trim(),
+                address.getText().trim(),
+                postcode.getText().trim(),
+                existing.getEmergencyContactName(),
+                existing.getEmergencyContactPhone(),
+                existing.getRegistrationDate(),
+                gpSurgeryId.getText().trim()
+        );
+
+        boolean ok = controller.updatePatient(updated);
+        if (!ok) {
+            JOptionPane.showMessageDialog(this, "Update failed.");
             return;
         }
 

@@ -110,4 +110,28 @@ public class AppController {
         writer.writeAll("data/patients.csv", patientRepo.getAll());
         return true;
     }
+
+        public boolean updatePatient(Patient updated) {
+        Patient existing = patientRepo.findById(updated.getPatientId());
+        if (existing == null) return false;
+
+        existing.setFirstName(updated.getFirstName());
+        existing.setLastName(updated.getLastName());
+        existing.setDateOfBirth(updated.getDateOfBirth());
+        existing.setNhsNumber(updated.getNhsNumber());
+        existing.setGender(updated.getGender());
+        existing.setPhoneNumber(updated.getPhoneNumber());
+        existing.setEmail(updated.getEmail());
+        existing.setAddress(updated.getAddress());
+        existing.setPostcode(updated.getPostcode());
+        existing.setEmergencyContactName(updated.getEmergencyContactName());
+        existing.setEmergencyContactPhone(updated.getEmergencyContactPhone());
+        existing.setRegistrationDate(updated.getRegistrationDate());
+        existing.setGpSurgeryId(updated.getGpSurgeryId());
+
+        // Persist full file rewrite
+        PatientCsvWriter writer = new PatientCsvWriter();
+        writer.writeAll("data/patients.csv", patientRepo.getAll());
+        return true;
+    }
 }
