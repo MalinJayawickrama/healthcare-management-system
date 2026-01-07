@@ -1,7 +1,7 @@
-# Compiled output
+# compiled output
 bin/
 out/
 
-# OS / editor junk
+# OS/editor junk
 .DS_Store
 *.log
