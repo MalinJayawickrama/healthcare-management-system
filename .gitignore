@@ -1,0 +1,7 @@
+# Compiled output
+bin/
+out/
+
+# OS / editor junk
+.DS_Store
+*.log
