@@ -12,6 +12,9 @@ public class ReferralTableModel extends AbstractTableModel {
     public ReferralTableModel(List<Referral> referrals) {
         this.referrals = referrals;
     }
+    public void refresh() {
+        fireTableDataChanged();
+    }
 
     @Override public int getRowCount() { return referrals.size(); }
     @Override public int getColumnCount() { return columns.length; }

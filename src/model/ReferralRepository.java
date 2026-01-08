@@ -8,5 +8,19 @@ public class ReferralRepository {
 
     public List<Referral> getAll() { return referrals; }
     public int size() { return referrals.size(); }
+
     public void add(Referral r) { referrals.add(r); }
+
+    public Referral findById(String id) {
+        for (Referral r : referrals) {
+            if (r.getReferralId().equals(id)) return r;
+        }
+        return null;
+    }
+
+    public boolean removeById(String id) {
+        Referral r = findById(id);
+        if (r == null) return false;
+        return referrals.remove(r);
+    }
 }

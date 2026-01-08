@@ -24,6 +24,8 @@ import model.Appointment;
 import model.AppointmentCsvSaver;
 import model.AppointmentCsvWriter;
 import model.PrescriptionCsvWriter;
+import model.ReferralCsvWriter;
+import java.time.LocalDate;
 import view.MainFrame;
 
 
@@ -440,6 +442,25 @@ public boolean deleteAppointmentById(String appointmentId) {
         if (!removed) return false;
 
         new PrescriptionCsvWriter().writeAll("data/prescriptions.csv", prescriptionRepo.getAll());
+        return true;
+    }
+    public boolean updateReferral(Referral updated) {
+        Referral existing = referralRepo.findById(updated.getReferralId());
+        if (existing == null) return false;
+
+        // simplest update: remove + add updated
+        referralRepo.removeById(existing.getReferralId());
+        referralRepo.add(updated);
+
+        new ReferralCsvWriter().writeAll("data/referrals.csv", referralRepo.getAll());
+        return true;
+    }
+
+    public boolean deleteReferralById(String referralId) {
+        boolean removed = referralRepo.removeById(referralId);
+        if (!removed) return false;
+
+        new ReferralCsvWriter().writeAll("data/referrals.csv", referralRepo.getAll());
         return true;
     }
 }
